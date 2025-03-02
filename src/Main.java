@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        System.out.println("Kolosova Ekaterina");
+        System.out.println("Ekaterina Kolosova");
 
         Scanner scan = new Scanner(System.in);
         int icome = scan.nextInt();
