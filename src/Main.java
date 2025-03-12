@@ -25,7 +25,7 @@ public class Main {
     }
 
     private static int isLeapYear(int yearLeap) {
-        int res = (yearLeap % 4 == 0 || (yearLeap / 4 == 0 && yearLeap / 100 != 0)) ? 366 : 365;
+        int res = (yearLeap % 400 == 0 || (yearLeap % 4 == 0 && yearLeap % 100 != 0)) ? 366 : 365;
         return res;
     }
 }
