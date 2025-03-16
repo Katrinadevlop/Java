@@ -37,7 +37,7 @@ public class Main {
                     int usnIncome = getUsnIncome(income);
                     int usnIncomeminusExpenses = getUsnIncomeminusExpenses(income, expenses);
 
-                    if (usnIncome < -1 || usnIncomeminusExpenses < -1)
+                    if (usnIncome == -1 || usnIncomeminusExpenses == -1)
                         System.out.println("Налог не может быть отрицательным");
                     else if (usnIncome == usnIncomeminusExpenses)
                         System.out.println("Можете выбрать любую систему налогообложения");
@@ -63,7 +63,7 @@ public class Main {
         if (usnIncomeminusExpenses >= 0)
             return usnIncomeminusExpenses;
         else
-            return 0;
+            return -1;
     }
 
     private static int getUsnIncome(int income) {
@@ -71,6 +71,6 @@ public class Main {
         if (usnIncome >= 0)
             return usnIncome;
         else
-            return 0;
+            return -1;
     }
 }
