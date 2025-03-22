@@ -21,7 +21,7 @@ public class Book {
 
     public int estimatePrice() {
         if (pages * 3 * Math.floor(Math.sqrt(author.rating)) > 250) {
-            return pages * 3;
+            return (int) (pages * 3 * Math.floor(Math.sqrt(author.rating)));
         } else {
             return 0;
         }
