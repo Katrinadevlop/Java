@@ -1,3 +1,4 @@
+import deal.Deal;
 import taxSystem.TaxSystem;
 
 class Company {
@@ -25,13 +26,24 @@ class Company {
 
     public String payTaxes() {
         String res = "";
-        if (taxSystem.calcTaxFor(debit, credit) <= -1) {
+        int tax = taxSystem.calcTaxFor(debit, credit);
+        if (tax <= -1) {
             res = "Налог не может быть отрицательным";
         } else {
-            res = "Компания " + title + " уплатила налог в размере: " + taxSystem.calcTaxFor(debit, credit) + " руб.;";
+            res = "Компания " + title + " уплатила налог в размере: " + tax + " руб.;";
             credit = 0;
             debit = 0;
         }
         return res;
+    }
+
+    public int applyDeals(Deal[] deals) {
+        for (Deal d : deals) {
+            credit += d.creditChange;
+            debit += d.debitChange;
+        }
+        int difference = Math.abs(debit - credit);
+        System.out.println(payTaxes());
+        return difference;
     }
 }
