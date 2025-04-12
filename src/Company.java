@@ -24,26 +24,24 @@ class Company {
         this.taxSystem = taxSystem;
     }
 
-    public String payTaxes() {
-        String res = "";
+    public void payTaxes() {
         int tax = taxSystem.calcTaxFor(debit, credit);
         if (tax <= -1) {
-            res = "Налог не может быть отрицательным";
+            System.out.println("Налог не может быть отрицательным");
         } else {
-            res = "Компания " + title + " уплатила налог в размере: " + tax + " руб.;";
+            System.out.println("Компания " + title + " уплатила налог в размере: " + tax + " руб.;");
             credit = 0;
             debit = 0;
         }
-        return res;
     }
 
     public int applyDeals(Deal[] deals) {
         for (Deal d : deals) {
-            credit += d.creditChange;
-            debit += d.debitChange;
+            credit += d.getCreditChange();
+            debit += d.getDebitChange();
         }
         int difference = Math.abs(debit - credit);
-        System.out.println(payTaxes());
+        payTaxes();
         return difference;
     }
 }
