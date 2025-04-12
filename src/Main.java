@@ -8,27 +8,27 @@ public class Main {
         int[][] randomColors = new int[SIZE][SIZE];
         int[][] rotatedColors = new int[SIZE][SIZE];
 
-        FillingArray(randomColors, random);
-        PrintArray(randomColors);
+        fillArray(randomColors, random);
+        printArray(randomColors);
         System.out.println();
 
         System.out.println("Поворот на 90 градусов");
-        RotateArrayOn90Degrees(randomColors, rotatedColors);
-        PrintArray(rotatedColors);
+        rotateArray90Degrees(randomColors, rotatedColors);
+        printArray(rotatedColors);
         System.out.println();
 
         System.out.println("Поворот на 180 градусов");
-        RotateArrayOn180Degrees(randomColors, rotatedColors);
-        PrintArray(rotatedColors);
+        rotateArray180Degrees(randomColors, rotatedColors);
+        printArray(rotatedColors);
         System.out.println();
 
         System.out.println("Поворот на 270 градусов");
-        RotateArrayOn270Degrees(randomColors, rotatedColors);
-        PrintArray(rotatedColors);
+        rotateArray270Degrees(randomColors, rotatedColors);
+        printArray(rotatedColors);
         System.out.println();
     }
 
-    private static void FillingArray(int[][] randomColors, Random random) {
+    private static void fillArray(int[][] randomColors, Random random) {
         for (int row = 0; row < SIZE; row++) {
             for (int cells = 0; cells < SIZE; cells++) {
                 randomColors[row][cells] = random.nextInt(255);
@@ -36,7 +36,7 @@ public class Main {
         }
     }
 
-    private static void RotateArrayOn90Degrees(int[][] randomColors, int[][] rotatedColors) {
+    private static void rotateArray90Degrees(int[][] randomColors, int[][] rotatedColors) {
         for (int row = 0; row < SIZE; row++) {
             for (int cells = 0; cells < SIZE; cells++) {
                 rotatedColors[row][cells] = randomColors[SIZE - 1 - cells][row];
@@ -44,7 +44,7 @@ public class Main {
         }
     }
 
-    private static void RotateArrayOn180Degrees(int[][] randomColors, int[][] rotatedColors) {
+    private static void rotateArray180Degrees(int[][] randomColors, int[][] rotatedColors) {
         for (int row = 0; row < SIZE; row++) {
             for (int cells = 0; cells < SIZE; cells++) {
                 rotatedColors[row][cells] = randomColors[SIZE - 1 - row][SIZE - 1 - cells];
@@ -52,7 +52,7 @@ public class Main {
         }
     }
 
-    private static void RotateArrayOn270Degrees(int[][] randomColors, int[][] rotatedColors) {
+    private static void rotateArray270Degrees(int[][] randomColors, int[][] rotatedColors) {
         for (int row = 0; row < SIZE; row++) {
             for (int cells = 0; cells < SIZE; cells++) {
                 rotatedColors[row][cells] = randomColors[cells][SIZE - 1 - row];
@@ -60,7 +60,7 @@ public class Main {
         }
     }
 
-    private static void PrintArray(int[][] arrayRandomNumbers) {
+    private static void printArray(int[][] arrayRandomNumbers) {
         for (int row = 0; row < SIZE; row++) {
             for (int cells = 0; cells < SIZE; cells++) {
                 System.out.format("%4d", arrayRandomNumbers[row][cells]);
