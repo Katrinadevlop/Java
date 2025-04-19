@@ -17,7 +17,7 @@ public class PasswordChecker {
         this.maxRepeats = maxRepeats;
     }
 
-    public boolean verify(String password) {
+    public boolean verify(String password) { 
         if (minLength == null && maxRepeats == null){
             throw new IllegalStateException("Настройки не установлены.");
         }
