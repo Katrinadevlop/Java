@@ -5,24 +5,31 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         PasswordChecker passwordChecker = new PasswordChecker();
 
-        System.out.println("Введите мин. длину пароля: ");
-        int minLength = scanner.nextInt();
-        passwordChecker.setMinLength(minLength);
-
-        System.out.println("Введите макс. допустимое количество повторений символа подряд: ");
-        int maxRepeats = scanner.nextInt();
-        passwordChecker.setMaxRepeats(maxRepeats);
-
-        while(true){
-            System.out.println("Введите пароль или end: ");
-            String password = scanner.nextLine();
-
-            if (password.equals("end")){
-                System.out.println("Программа завершена");
-                break;
-            }
-
-            System.out.println(passwordChecker.verify(password));
+        try {
+            System.out.print("Введите минимальную длинну: ");
+            int minLength = Integer.parseInt(scanner.nextLine());
+            passwordChecker.setMinLength(minLength);
+            System.out.print("Введите макс. количество повторений символа подряд: ");
+            int maxRepeats = Integer.parseInt(scanner.nextLine());
+            passwordChecker.setMaxRepeats(maxRepeats);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
+
+        try {
+            while (true) {
+                System.out.print("Введите пароль или end: ");
+                String password = scanner.nextLine();
+
+                if (password.equals("end")) {
+                    break;
+                }
+
+                System.out.println(passwordChecker.verify(password) ? "Подходит!" : "Не подходит!");
+            }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Программа завершена");
     }
 }

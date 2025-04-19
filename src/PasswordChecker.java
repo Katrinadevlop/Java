@@ -5,14 +5,14 @@ public class PasswordChecker {
 
     public void setMinLength(int minLength) {
         if (minLength < 0) {
-            throw new IllegalArgumentException("Не подходит!");
+            throw new IllegalArgumentException("Минимальная длина пароля должна быть больше нуля");
         }
         this.minLength = minLength;
     }
 
     public void setMaxRepeats(int maxRepeats) {
         if (maxRepeats <= 0) {
-            throw new IllegalArgumentException("Не подходит!");
+            throw new IllegalArgumentException("Количество повторений должно быть больше нуля");
         }
         this.maxRepeats = maxRepeats;
     }
