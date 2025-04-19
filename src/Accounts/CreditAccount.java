@@ -3,26 +3,29 @@ package Accounts;
 public class CreditAccount extends Account {
     private long creditLimit;
 
-    public CreditAccount(long amount, long creditLimit) {
-        super(amount);
+    public CreditAccount(long creditLimit) {
+        this.amount = creditLimit;
         this.creditLimit = creditLimit;
     }
 
     @Override
     public boolean add(long amount) {
-        if (amount > 0) {
+        if (amount + this.amount > creditLimit) {
+            return false;
+        }
+        else {
             this.amount += amount;
             return true;
         }
-        return false;
     }
 
     @Override
     public boolean pay(long amount) {
-        if (amount > 0 && (this.amount - amount) >= -creditLimit) {
+        if (this.amount - amount < 0) {
+            return false;
+        } else {
             this.amount -= amount;
             return true;
         }
-        return false;
     }
 }

@@ -7,7 +7,7 @@ public class SmartLogger implements Logger {
     @Override
     public void log(String msg) {
         i++;
-        if (LocalDateTime.now().equals("error")) {
+        if (msg.toLowerCase().contains("error")) {
             System.out.println("Error" + i + " " + "[" + LocalDateTime.now() + "]" + " " + msg);
         } else {
             System.out.println("INFO#" + i + " " + "[" + LocalDateTime.now() + "]" + " " + msg);
