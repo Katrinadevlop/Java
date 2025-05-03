@@ -2,33 +2,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListToDo {
-    List<String> list = new ArrayList<>();
+    List<String> toDoList = new ArrayList<>();
 
-    void addCase(String name) {
-        list.add(name);
+    void addTask(String name) {
+        toDoList.add(name);
         System.out.println("Добавлено!");
     }
 
-    List<String> getAllCase() {
-        return list;
+    List<String> getAllTask() {
+        return toDoList;
     }
 
-    void deleteCaseIndex(int index) {
-        list.remove(index - 1);
-        System.out.println("Удалено!");
+    void deleteTaskIndex(int index) {
+        if (index > 0 && index <= toDoList.size()) {
+            toDoList.remove(index - 1);
+            System.out.println("Удалено!");
+        } else {
+            System.out.println("Нет дела с таким номером.");
+        }
     }
 
-    void deleteCaseName(String name) {
-        list.remove(name);
-        System.out.println("Удалено!");
+    void deleteTaskName(String name) {
+        if (toDoList.contains(name)) {
+            toDoList.remove(name);
+            System.out.println("Удалено!");
+        } else {
+            System.out.println("Нет дела с таким названием.");
+        }
     }
 
     void deleteKeyWord(String keyWord) {
-        for (int i = list.size() - 1; i >= 0; i--){
-            if (list.get(i).contains(keyWord)){
-                list.remove(i);
+        boolean found = false;
+
+        for (int i = toDoList.size() - 1; i >= 0; i--) {
+            if (toDoList.get(i).contains(keyWord)) {
+                toDoList.remove(i);
+                found = true;
             }
         }
-        System.out.println("Удалено!");
+
+        if (found) {
+            System.out.println("Удалено!");
+        } else {
+            System.out.println("Нет совпадений.");
+        }
     }
 }

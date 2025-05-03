@@ -19,24 +19,24 @@ public class Main {
             switch (answerUser) {
                 case 1:
                     System.out.print("Введите название задачи:");
-                    String name = scanner.nextLine();
-                    listToDo.addCase(name);
+                    String taskName = scanner.nextLine();
+                    listToDo.addTask(taskName);
                     break;
                 case 2:
-                    List<String> list = listToDo.getAllCase();
-                    for (int i = 0; i < list.size(); i++) {
-                        System.out.println((i + 1) + ". " + list.get(i));
+                    List<String> listAllCase = listToDo.getAllTask();
+                    for (int i = 0; i < listAllCase.size(); i++) {
+                        System.out.println((i + 1) + ". " + listAllCase.get(i));
                     }
                     break;
                 case 3:
                     System.out.print("Введите номер для удаления:");
-                    int index = Integer.parseInt(scanner.nextLine());
-                    listToDo.deleteCaseIndex(index);
+                    int taskIndex = Integer.parseInt(scanner.nextLine());
+                    listToDo.deleteTaskIndex(taskIndex);
                     break;
                 case 4:
                     System.out.print("Введите задачу для удаления:");
-                    name = scanner.nextLine();
-                    listToDo.deleteCaseName(name);
+                    taskName = scanner.nextLine();
+                    listToDo.deleteTaskName(taskName);
                     break;
                 case 5:
                     System.out.print("Введите ключевое слово для удаления задач: ");
@@ -45,9 +45,9 @@ public class Main {
                     break;
             }
             System.out.println("Ваш список дел:");
-            List<String> list = listToDo.getAllCase();
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println((i + 1) + ". " + list.get(i));
+            List<String> listAllCase = listToDo.getAllTask();
+            for (int i = 0; i < listAllCase.size(); i++) {
+                System.out.println((i + 1) + ". " + listAllCase.get(i));
             }
         }
     }
