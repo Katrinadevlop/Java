@@ -29,7 +29,7 @@ class MainTest {
         sum = 2000
         sumMonth = 300000
         result = typeCard(nameCard, sum, sumMonth)
-        assertEquals("Комиссия: 35.0", result)
+        assertEquals("Комиссия: 36.0", result)
 
         nameCard = "VK Pay"
         sum = 1000
