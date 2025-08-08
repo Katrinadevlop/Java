@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.Assertions.*
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class WallServiceTest {
+
     @Test
     fun addCommentPost() {
         val service = WallService()
@@ -38,6 +39,8 @@ class WallServiceTest {
             text = "Невалидный комментарий"
         )
 
-        service.createComment(postId = 999, comment)
+        assertThrows(PostNotFoundException::class.java) {
+            service.createComment(postId = 999, comment)
+        }
     }
 }
