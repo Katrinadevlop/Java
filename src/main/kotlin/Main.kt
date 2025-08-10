@@ -27,4 +27,10 @@ fun main() {
 
     service.deleteChat(3)
     println("Чаты после удаления 3: " + service.getChats().map { it.interlocutorId })
+
+    try {
+        service.deleteChat(3)
+    } catch (e: ChatNotFoundException) {
+        println("Повторное удаление 3: ChatNotFoundException (${e.message})")
+    }
 }
