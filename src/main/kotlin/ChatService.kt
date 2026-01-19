@@ -7,10 +7,13 @@ class ChatService(private val currentUserId: Int) {
     private var nextMessageId = 1
 
     fun getChats(): List<Chat> =
-        chats.values.filter { chat -> chat.messages.any { !it.isDeleted } }
+        chats.values.asSequence()
+            .filter { chat -> chat.messages.any { !it.isDeleted } }
+            .toList()
 
     fun getUnreadChatsCount(): Int =
-        chats.values.count { it.messages.hasUnreadFor(currentUserId) }
+        chats.values.asSequence()
+            .count { it.messages.hasUnreadFor(currentUserId) }
 
     fun createChatIfAbsent(interlocutorId: Int): Chat =
         chats.getOrPut(interlocutorId) {
@@ -20,7 +23,7 @@ class ChatService(private val currentUserId: Int) {
     fun deleteChat(interlocutorId: Int) {
         val chat = chats.remove(interlocutorId)
             ?: throw ChatNotFoundException("Чат $interlocutorId не найден")
-        chat.messages.forEach { it.isDeleted = true } // пометим историю
+        chat.messages.asSequence().forEach { it.isDeleted = true }
     }
 
     fun createMessage(toId: Int, text: String): Message {
@@ -40,28 +43,32 @@ class ChatService(private val currentUserId: Int) {
         if (newText.isBlank()) throw ValidationException("Новый текст сообщения пуст")
         val chat = chats[interlocutorId]
             ?: throw ChatNotFoundException("Чат с пользователем $interlocutorId не найден")
-        val idx = chat.messages.indexOfFirst { it.id == messageId && !it.isDeleted }
-        if (idx == -1) throw MessageNotFoundException("Сообщение $messageId не найдено")
-        chat.messages[idx].text = newText
+        val message = chat.messages.asSequence()
+            .firstOrNull { it.id == messageId && !it.isDeleted }
+            ?: throw MessageNotFoundException("Сообщение $messageId не найдено")
+        message.text = newText
         return true
     }
 
     fun deleteMessage(interlocutorId: Int, messageId: Int): Boolean {
         val chat = chats[interlocutorId]
             ?: throw ChatNotFoundException("Чат с пользователем $interlocutorId не найден")
-        val msg = chat.messages.find { it.id == messageId }
+        val msg = chat.messages.asSequence()
+            .firstOrNull { it.id == messageId }
             ?: throw MessageNotFoundException("Сообщение $messageId не найдено")
         if (msg.isDeleted) throw MessageNotFoundException("Сообщение $messageId уже удалено")
         msg.isDeleted = true
 
-        if (chat.messages.none { !it.isDeleted }) {
+        if (chat.messages.asSequence().none { !it.isDeleted }) {
             chats.remove(interlocutorId)
         }
         return true
     }
 
     fun getLastMessages(): List<String> =
-        chats.values.map { chat -> chat.messages.lastAlive()?.text ?: "нет сообщений" }
+        chats.values.asSequence()
+            .map { chat -> chat.messages.lastAlive()?.text ?: "нет сообщений" }
+            .toList()
 
     fun getMessages(interlocutorId: Int, count: Int): List<Message> {
         require(count > 0) { "count должен быть > 0" }
