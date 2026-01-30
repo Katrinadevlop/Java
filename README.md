@@ -1108,11 +1108,243 @@ Homework 43 -
 
 ---
 
-
-Homework  - 
+Homework 44 - 
 - **1 задание**.
 На лекции мы организовали только обработку позитивного сценария: нам приходят ответы с кодом 2xx, и мы можем обработать тело ответа (если оно есть).
 Давайте рассмотрим альтернативный, не очень частый сценарий: в 50 % случаев сервер будет присылать не 2xx коды ответа.
 Возьмите сервер из каталога server и реализуйте обработку подобного рода ошибок. Как реализовать ошибку, вы решаете сами.
 Необязательно: посмотрите в приложениях Android, как реализована обработка подобных ошибок с точки зрения интерфейса: дают ли пользователю элементы управления для повторения запроса. Попробуйте их реализовать.
+Примечание*: стандартная CRUD-функциональность должна по-прежнему работать.
 
+---
+
+Homework 45 - 
+- **1 задание**.
+Разработчики снова переделали API и сделали следующие сущности:
+```kotlin
+data class Post(
+    val id: Long,
+    val authorId: Long,
+    val content: String,
+    val published: Long,
+    val likedByMe: Boolean,
+    val likes: Int = 0,
+    var attachment: Attachment? = null,
+)
+
+data class Attachment(
+    val url: String,
+    val description: String,
+    val type: AttachmentType,
+)
+
+data class Comment(
+    val id: Long,
+    val postId: Long,
+    val authorId: Long,
+    val content: String,
+    val published: Long,
+    val likedByMe: Boolean,
+    val likes: Int = 0,
+)
+
+data class Author(
+    val id: Long,
+    val name: String,
+    val avatar: String,
+)
+```
+Теперь в постах и комментариях нет ни имени автора, ни аватарки.
+Сервер с реализацией находится в каталоге server.
+Чтобы автор отображался, нужно делать запрос на /api/authors/{id}, где {id} — это идентификатор автора. Никакого getAll для авторов нет.
+Задача
+Используя примеры с лекций, реализуйте любым способом (последовательным или с помощью async/await) получение авторов:
+- для постов;
+- для комментариев (необязательная часть).
+Нужно сделать обычный (не Android) проект и реализовать такую последовательность вызовов, в результате которой мы получим коллекцию из постов с авторами и комментариями. Комментарии тоже должны быть с авторами — необязательная часть.
+
+---
+
+Homework 46 - 
+- **1 задание**.
+Вопросы: Cancellation
+Вопрос №1
+Отработает ли в этом коде строка <--? Поясните, почему да или нет.
+
+fun main() = runBlocking {
+    val job = CoroutineScope(EmptyCoroutineContext).launch {
+        launch {
+            delay(500)
+            println("ok") // <--
+        }
+        launch {
+            delay(500)
+            println("ok")
+        }
+    }
+    delay(100)
+    job.cancelAndJoin()
+}
+Вопрос №2
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() = runBlocking {
+    val job = CoroutineScope(EmptyCoroutineContext).launch {
+        val child = launch {
+            delay(500)
+            println("ok") // <--
+        }
+        launch {
+            delay(500)
+            println("ok")
+        }
+        delay(100)
+        child.cancel()
+    }
+    delay(100)
+    job.join()
+}
+Вопросы: Exception Handling
+Вопрос №1
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    with(CoroutineScope(EmptyCoroutineContext)) {
+        try {
+            launch {
+                throw Exception("something bad happened")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // <--
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №2
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        try {
+            coroutineScope {
+                throw Exception("something bad happened")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // <--
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №3
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        try {
+            supervisorScope {
+                throw Exception("something bad happened")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // <--
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №4
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        try {
+            coroutineScope {
+                launch {
+                    delay(500)
+                    throw Exception("something bad happened") // <--
+                }
+                launch {
+                    throw Exception("something bad happened")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №5
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        try {
+            supervisorScope {
+                launch {
+                    delay(500)
+                    throw Exception("something bad happened") // <--
+                }
+                launch {
+                    throw Exception("something bad happened")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // <--
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №6
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        CoroutineScope(EmptyCoroutineContext).launch {
+            launch {
+                delay(1000)
+                println("ok") // <--
+            }
+            launch {
+                delay(500)
+                println("ok")
+            }
+            throw Exception("something bad happened")
+        }
+    }
+    Thread.sleep(1000)
+}
+Вопрос №7
+Отработает ли в этом коде строка <--. Поясните, почему да или нет.
+
+fun main() {
+    CoroutineScope(EmptyCoroutineContext).launch {
+        CoroutineScope(EmptyCoroutineContext + SupervisorJob()).launch {
+            launch {
+                delay(1000)
+                println("ok") // <--
+            }
+            launch {
+                delay(500)
+                println("ok")
+            }
+            throw Exception("something bad happened")
+        }
+    }
+    Thread.sleep(1000)
+}
+
+В первом случае строка не выполнится, потому что создаётся новый CoroutineScope с собственным контекстом, который не является дочерним по отношению к runBlocking. Внутри него запускаются две корутины с задержкой 500 миллисекунд, но уже через 100 миллисекунд вызывается cancelAndJoin у job. Это отменяет родительскую корутину, а вместе с ней и все дочерние, поэтому ни одна из них не доживает до момента выполнения println.
+
+Во втором случае строка тоже не выполнится. Здесь создаются две дочерние корутины, при этом первая сохраняется в переменную child. Через 100 миллисекунд вызывается child.cancel, поэтому отменяется только первая корутина. Она не успевает дойти до задержки в 500 миллисекунд. Вторая корутина продолжает работу и завершается успешно, но нужная строка находится именно в первой, поэтому она не выполняется.
+
+В первом вопросе про обработку исключений строка также не выполнится. Метод launch запускает корутину асинхронно и сразу возвращает управление, а исключение выбрасывается позже, уже внутри корутины. try-catch вокруг launch ловит только синхронные исключения, возникающие при вызове launch, но не асинхронные исключения внутри корутины. В итоге исключение будет обработано стандартным обработчиком и выведено в stderr.
+
+Во втором вопросе с coroutineScope строка выполнится. coroutineScope — это suspend-функция, которая ждёт завершения всех дочерних корутин. Если внутри неё выбрасывается исключение, оно пробрасывается наружу как результат выполнения функции. Поскольку try-catch оборачивает именно вызов coroutineScope, исключение будет перехвачено, и e.printStackTrace выполнится.
+
+В третьем случае с supervisorScope строка тоже выполнится. Несмотря на отличие supervisorScope от coroutineScope в поведении по отношению к дочерним корутинам, если исключение выбрасывается напрямую внутри supervisorScope, а не в дочерней корутине, оно пробрасывается наружу. Соответственно, try-catch его ловит и e.printStackTrace выполняется.
+
+В четвёртом вопросе строка с выбрасыванием исключения после задержки 500 миллисекунд не выполнится. Внутри coroutineScope запускаются две дочерние корутины, и вторая из них сразу выбрасывает исключение. coroutineScope при первом же исключении отменяет все остальные дочерние корутины, поэтому первая корутина будет отменена до истечения 500 миллисекунд. Исключение из второй корутины будет перехвачено в catch, и e.printStackTrace выполнится.
+
+В пятом случае ответ частичный. Строка с throw Exception после задержки 500 миллисекунд выполнится, а e.printStackTrace — нет. supervisorScope не отменяет соседние корутины при падении одной из них, поэтому обе дочерние корутины дойдут до своих исключений. Однако исключения из дочерних корутин внутри supervisorScope не пробрасываются наружу, они обрабатываются через CoroutineExceptionHandler или стандартный обработчик. Из-за этого блок catch не срабатывает.
+
+В шестом вопросе строка не выполнится. Создаётся новый независимый CoroutineScope, внутри которого запускаются дочерние корутины. Родительская корутина сразу выбрасывает исключение, из-за чего весь scope отменяется целиком. Все дочерние корутины будут отменены и не успеют выполниться.
+
+В седьмом случае строка также не выполнится. Использование SupervisorJob здесь не помогает, потому что исключение выбрасывается в родительской корутине. При падении родительской корутины отменяется весь её Job вместе со всеми дочерними корутинами. SupervisorJob защищает корутины друг от друга, но не защищает дочерние корутины от отмены их родителя, поэтому они будут отменены.
