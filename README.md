@@ -936,23 +936,101 @@ Homework 39 -
 ---
 
 ## Промышленная разработка под Android
-Homework 40 - 
+Homework 40 - (Без проекта)
 - **1 задание**.
-- **2 задание**.
-- **3 задание**.
+У вас есть кусок кода, который почему-то не работает:
+```kotlin
+package ru.netology.deadlock
+import kotlin.concurrent.thread
+fun main() {
+    val resourceA = Any()
+    val resourceB = Any()
+
+    val consumerA = Consumer("A")
+    val consumerB = Consumer("B")
+
+    val t1 = thread {
+        consumerA.lockFirstAndTrySecond(resourceA, resourceB)
+    }
+    val t2 = thread {
+        consumerB.lockFirstAndTrySecond(resourceB, resourceA)
+    }
+
+    t1.join()
+    t2.join()
+
+    println("main successfully finished")
+}
+
+class Consumer(private val name: String) {
+    fun lockFirstAndTrySecond(first: Any, second: Any) {
+        synchronized(first) {
+            println("$name locked first, sleep and wait for second")
+            Thread.sleep(1000)
+            lockSecond(second)
+        }
+    }
+
+    fun lockSecond(second: Any) {
+        synchronized(second) {
+            println("$name locked second")
+        }
+    }
+}
+```
+Запустите этот код в IntelliJ IDEA и попробуйте разобраться, почему работа функции main не завершается.
+В анализе вам поможет функциональность IDEA (иконка фотоаппарата или Ctrl + Break)
+Вы увидите снимок состояния потоков
+Проанализируйте код и состояние Thread-0 и Thread-1.
+Ответ:
+Функция main не завершается, потому что два потока попадают во взаимную блокировку. Первый поток удерживает resourceA и ждёт resourceB, второй удерживает resourceB и ждёт resourceA. Оба зависают, поэтому join в main ждёт их бесконечно и выполнение не заканчивается.
 
 ---
 
-Homework 37 - 
+Homework 41 - 
 - **1 задание**.
+В проекте, который мы рассматривали на лекции, не реализованы лайки:
+```kotlin
+class PostRepositoryImpl: PostRepository {
+    override fun likeById(id: Long) {
+        // TODO: do this in homework
+    }
+}
+```
+Backend-разработчики наконец предоставили описание API для реализации:
+1. Добавление лайка:
+POST /api/posts/{id}/likes
+2. Удаление лайка:
+DELETE /api/posts/{id}/likes
+Где {id} — это идентификатор поста.
+В ответ на оба запроса сервер присылает JSON обновлённого поста, который можно использовать для отображения изменённого поста в ленте.
+Реализуйте возможность ставить и снимать лайк в вашем проекте. Для этого используйте код сервера с лекции.
+Обратите внимание: после выполнения запроса список постов нужно обновить, чтобы отображалось актуальное количество лайков. Подумайте, как это правильно сделать.
 - **2 задание**.
-- **3 задание**.
+В списках в Android есть функция Swipe To Refresh:
+- Пользователь тянет сверху вниз список (или любое другое View).
+- Появляется иконка обновления.
+- Список обновляется.
+- Детали можно посмотреть на странице документации.
+Задача
+- Добавьте необходимую зависимость в build.gradle.
+- Заверните свой RecyclerView в androidx.swiperefreshlayout.widget.SwipeRefreshLayout.
+- Реализуйте OnRefreshListener, который заново запрашивает все посты с сервера.
 
+---
 
-Homework 37 - 
+Homework 42 - 
 - **1 задание**.
-- **2 задание**.
-- **3 задание**.
+Возьмите проект сервера с лекции и мигрируйте всю функциональность с использованием функции thread на enqueue из OkHttp.
+Calls
+Запросы могут быть выполнены двумя способами:
+- синхронные: ваш поток блокируется до тех пор, пока ответ не станет доступен;
+- асинхронные: вы ставите запрос в очередь в любом потоке и получаете ответ в другом потоке тогда, когда он станет доступен.
+Dispatch
+- Для синхронных запросов вы предоставляете собственные потоки и сами отвечаете за распределение запросов по потокам.
+- Для асинхронных запросов Dispatcher реализует политику максимального количества одновременных запросов. Вы можете установить максимум на веб-сервер (по умолчанию — 5) и общий максимум (по умолчанию — 64).
+
+---
 
 Homework  - 
 - **1 задание**.
