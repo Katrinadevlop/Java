@@ -1165,12 +1165,12 @@ data class Author(
 
 ---
 
-Homework 46 - 
+Homework 46 - (Без проекта)
 - **1 задание**.
 Вопросы: Cancellation
 Вопрос №1
 Отработает ли в этом коде строка <--? Поясните, почему да или нет.
-
+```kotlin
 fun main() = runBlocking {
     val job = CoroutineScope(EmptyCoroutineContext).launch {
         launch {
@@ -1185,9 +1185,10 @@ fun main() = runBlocking {
     delay(100)
     job.cancelAndJoin()
 }
+```
 Вопрос №2
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() = runBlocking {
     val job = CoroutineScope(EmptyCoroutineContext).launch {
         val child = launch {
@@ -1204,10 +1205,11 @@ fun main() = runBlocking {
     delay(100)
     job.join()
 }
+```
 Вопросы: Exception Handling
 Вопрос №1
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     with(CoroutineScope(EmptyCoroutineContext)) {
         try {
@@ -1220,9 +1222,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №2
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         try {
@@ -1235,9 +1238,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №3
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         try {
@@ -1250,9 +1254,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №4
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         try {
@@ -1271,9 +1276,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №5
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         try {
@@ -1292,9 +1298,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №6
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         CoroutineScope(EmptyCoroutineContext).launch {
@@ -1311,9 +1318,10 @@ fun main() {
     }
     Thread.sleep(1000)
 }
+```
 Вопрос №7
 Отработает ли в этом коде строка <--. Поясните, почему да или нет.
-
+```kotlin
 fun main() {
     CoroutineScope(EmptyCoroutineContext).launch {
         CoroutineScope(EmptyCoroutineContext + SupervisorJob()).launch {
@@ -1330,7 +1338,8 @@ fun main() {
     }
     Thread.sleep(1000)
 }
-
+```
+Ответы:
 В первом случае строка не выполнится, потому что создаётся новый CoroutineScope с собственным контекстом, который не является дочерним по отношению к runBlocking. Внутри него запускаются две корутины с задержкой 500 миллисекунд, но уже через 100 миллисекунд вызывается cancelAndJoin у job. Это отменяет родительскую корутину, а вместе с ней и все дочерние, поэтому ни одна из них не доживает до момента выполнения println.
 
 Во втором случае строка тоже не выполнится. Здесь создаются две дочерние корутины, при этом первая сохраняется в переменную child. Через 100 миллисекунд вызывается child.cancel, поэтому отменяется только первая корутина. Она не успевает дойти до задержки в 500 миллисекунд. Вторая корутина продолжает работу и завершается успешно, но нужная строка находится именно в первой, поэтому она не выполняется.
@@ -1348,3 +1357,57 @@ fun main() {
 В шестом вопросе строка не выполнится. Создаётся новый независимый CoroutineScope, внутри которого запускаются дочерние корутины. Родительская корутина сразу выбрасывает исключение, из-за чего весь scope отменяется целиком. Все дочерние корутины будут отменены и не успеют выполниться.
 
 В седьмом случае строка также не выполнится. Использование SupervisorJob здесь не помогает, потому что исключение выбрасывается в родительской корутине. При падении родительской корутины отменяется весь её Job вместе со всеми дочерними корутинами. SupervisorJob защищает корутины друг от друга, но не защищает дочерние корутины от отмены их родителя, поэтому они будут отменены.
+
+---
+
+Homework 47 - 
+- **1 задание**.
+Используя код и сервер из лекции, реализуйте в проекте функциональность удаления и проставления лайков. Для этого нужно отредактировать PostViewModel и PostRepositoryImpl:
+```kotlin
+// PostViewModel
+fun likeById(id: Long) {
+    TODO()
+}
+fun removeById(id: Long) {
+    TODO()
+}
+// PostRepositoryImpl
+override suspend fun removeById(id: Long) {
+    TODO("Not yet implemented")
+}
+override suspend fun likeById(id: Long) {
+    TODO("Not yet implemented")
+}
+```
+Логика работы:
+- Сначала модифицируете запись в локальной БД или удаляете.
+- Затем отправляете соответствующий запрос в API (HTTP).
+- Не забудьте об обработке ошибок и кнопке Retry в случае, если запрос в API завершился с ошибкой (в том числе в случае отсутствия сетевого соединения*).
+Примечание*: не обязательно перезапускать сервер. Достаточно отключить сеть в шторке телефона/эмулятора.
+- **2 задание**.
+В текущей реализации сохранения мы сначала отправляем запрос в API и только в случае получения успешного ответа добавляем его в локальную БД. Пост появляется в RecyclerView:
+```kotlin
+override suspend fun save(post: Post) {
+    try {
+        val response = PostsApi.service.save(post)
+        if (!response.isSuccessful) {
+            throw ApiError(response.code(), response.message())
+        }
+
+        val body = response.body() ?: throw ApiError(response.code(), response.message())
+        dao.insert(PostEntity.fromDto(body))
+    } catch (e: IOException) {
+        throw NetworkError
+    } catch (e: Exception) {
+        throw UnknownError
+    }
+}
+```
+Попробуйте сделать наоборот: сначала сохранить в локальную БД, чтобы он сразу появился в RecyclerView, а затем уже сделать запрос в API.
+Подсказка
+Для этого вам стоит подумать над двумя вопросами:
+- Какой id должен быть у поста, ведь id присваивается на сервере?
+- Как отделять несохранённые на сервере посты от сохранённых? Например, в мессенджерах Telegram/WhatsApp рисуется специальная иконка, если сообщение ещё не сохранено на сервере.
+- Для реализации второго пункта внесите в PostEntity дополнительные поля, отвечающие за этот статус. На базе них можно рисовать иконку статуса в карточке поста + продумывать механику взаимодействия: например, несохранённый пост нельзя лайкнуть.
+Не забудьте о Retry для повторной попытки вызова API сохранения, если возникнут проблемы. Например, из-за отсутствия сетевого подключения.
+
